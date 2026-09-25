@@ -60,25 +60,26 @@ CNAME         — Custom domain config (noheamedia.com)
 To add a new portfolio card, copy this template and add it before `</div><!-- /portfolio-grid -->` in index.html:
 
 ```html
-<article class="portfolio-card reveal" data-category="CATEGORY" data-video-id="YOUTUBE_ID">
+<article class="portfolio-card" data-category="CATEGORY" data-video-id="YOUTUBE_ID">
   <div class="card-media">
     <div class="card-thumbnail">
-      <img src="" alt="TITLE" class="thumb-img" loading="lazy" />
+      <img alt="TITLE" class="thumb-img" loading="lazy" />
       <div class="card-overlay">
         <button class="play-btn" aria-label="Play TITLE">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
         </button>
       </div>
+      <div class="card-info-overlay">
+        <span class="card-tag">TAG_LABEL</span>
+        <h3 class="card-title">TITLE</h3>
+      </div>
     </div>
-  </div>
-  <div class="card-info">
-    <span class="card-tag">TAG_LABEL</span>
-    <h3 class="card-title">TITLE</h3>
-    <p class="card-desc">Short description</p>
   </div>
 </article>
 ```
 
-- For portrait (9:16) videos, add `portrait` to the class: `class="portfolio-card portrait reveal"`
+- For portrait (9:16) videos, add `data-format="portrait"` so the video opens in a tall player
 - Categories: `ai`, `vfx`, `editing`
 - Extract video ID from YouTube URL: `youtube.com/watch?v=VIDEO_ID` or `youtube.com/shorts/VIDEO_ID`
+- The thumbnail loads automatically from YouTube; clicking a card opens the video in a full-screen lightbox
+- If the number of visible cards is odd, the last one is centred automatically

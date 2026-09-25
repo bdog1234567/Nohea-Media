@@ -244,6 +244,7 @@ section { padding: 130px 0; }
   border-radius: 50%;
   background: var(--accent);
 }
+.nav-links a.nav-cta.active-link::after { display: none; }
 
 .nav-cta {
   padding: 7px 18px !important;
@@ -285,12 +286,15 @@ section { padding: 130px 0; }
 /* ============================================================
    HERO
    ============================================================ */
+/* Hero is 130vh tall for the parallax, but the content is centred in the
+   first screen so the buttons are always above the fold */
 #hero {
   position: relative;
   min-height: 130vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  grid-template-rows: minmax(100vh, auto) 1fr;
+  grid-template-rows: minmax(100svh, auto) 1fr;
+  justify-items: center;
   overflow: hidden;
   padding: 0;
 }
@@ -340,6 +344,7 @@ section { padding: 130px 0; }
 .hero-content {
   position: relative;
   z-index: 3;
+  align-self: center;
   text-align: center;
   padding: var(--nav-h) 28px 0;
 }
@@ -448,10 +453,11 @@ section { padding: 130px 0; }
   box-shadow: inset 0 0 0 1px var(--accent);
 }
 
-/* Scroll indicator */
+/* Scroll indicator — sits at the bottom of the first screen, not the 130vh hero */
 .hero-scroll {
   position: absolute;
-  bottom: 36px;
+  top: calc(100vh - 100px);
+  top: calc(100svh - 100px);
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -489,12 +495,19 @@ section { padding: 130px 0; }
   overflow: hidden;
   white-space: nowrap;
 }
+/* script.js repeats .marquee-group to fill the screen and scrolls the track
+   by exactly one group width, so the loop is seamless on any monitor */
 .marquee-track {
-  display: inline-flex;
-  align-items: center;
-  gap: 20px;
-  animation: marqueeScroll 22s linear infinite;
+  display: flex;
+  width: max-content;
+  will-change: transform;
 }
+.marquee-group {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+.marquee-group > * { margin-right: 20px; }
 .marquee-item {
   font-family: var(--font-heading);
   font-size: 0.68rem;
@@ -509,17 +522,15 @@ section { padding: 130px 0; }
   flex-shrink: 0;
   opacity: 0.7;
 }
-@keyframes marqueeScroll {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-33.333%); }
-}
 
 /* ============================================================
    CUSTOM CURSOR
    ============================================================ */
+/* Native cursor is only hidden once script.js has the ring running —
+   if the scripts fail to load, visitors keep a normal cursor */
 @media (hover: hover) and (pointer: fine) {
-  body { cursor: none; }
-  a, button, [role="button"], .portfolio-card, .filter-btn { cursor: none; }
+  .has-custom-cursor body { cursor: none; }
+  .has-custom-cursor :is(a, button, [role="button"], .portfolio-card, .filter-btn) { cursor: none; }
 }
 #cursor-ring {
   position: fixed;
@@ -595,11 +606,13 @@ section { padding: 130px 0; }
   background: var(--bg-card);
   border-radius: 4px;
   overflow: hidden;
-  transition: transform var(--t) var(--ease), box-shadow var(--t);
+  /* Hover lift uses `translate`, leaving `transform` free for the GSAP
+     entrance — a transition on transform makes GSAP misread the end position */
+  transition: translate var(--t) var(--ease), box-shadow var(--t);
   cursor: pointer;
 }
 .portfolio-card:hover {
-  transform: translateY(-6px);
+  translate: 0 -6px;
   box-shadow: 0 18px 52px rgba(0,0,0,0.65), 0 0 30px rgba(255, 107, 157, 0.14);
   border-left: 2px solid var(--accent);
 }
@@ -614,6 +627,12 @@ section { padding: 130px 0; }
 .portfolio-card.hidden { display: none; }
 .portfolio-card.full-width {
   grid-column: 1 / -1;
+}
+/* Odd card out on the last row gets centred instead of hanging left */
+.portfolio-card.is-orphan {
+  grid-column: 1 / -1;
+  justify-self: center;
+  width: calc(50% - 8px);
 }
 
 /* Card media */
@@ -708,16 +727,6 @@ section { padding: 130px 0; }
   margin-left: 2px;
 }
 
-/* Embedded iframe (after play click) */
-.card-iframe {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  border: none;
-  background: #000;
-}
-
 /* Card info */
 .card-tag {
   display: inline-block;
@@ -735,6 +744,117 @@ section { padding: 130px 0; }
   letter-spacing: 0.05em;
   color: rgba(255, 255, 255, 0.9);
   margin-bottom: 3px;
+}
+
+/* ============================================================
+   VIDEO LIGHTBOX
+   ============================================================ */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  transition: opacity 0.35s var(--ease);
+}
+.lightbox[hidden] { display: none; }
+.lightbox.is-open { opacity: 1; }
+
+.lightbox-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(4, 4, 6, 0.92);
+  backdrop-filter: blur(10px);
+}
+
+/* Frame is sized to the largest 16:9 (or 9:16) box that fits the screen */
+.lightbox-inner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: min(1280px, 100%, (100vh - 130px) * 16 / 9);
+  width: min(1280px, 100%, (100svh - 130px) * 16 / 9);
+  transform: translateY(14px) scale(0.985);
+  transition: transform 0.5s var(--ease);
+  outline: none;
+}
+.lightbox.is-open .lightbox-inner { transform: none; }
+.lightbox.is-portrait .lightbox-inner {
+  width: min(100%, (100vh - 130px) * 9 / 16);
+  width: min(100%, (100svh - 130px) * 9 / 16);
+}
+
+.lightbox-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.lightbox-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.8);
+}
+.lightbox-title::before {
+  content: '';
+  width: 28px;
+  height: 2px;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+.lightbox-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.85);
+  cursor: pointer;
+  transition: all var(--t) var(--ease);
+}
+.lightbox-close:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  box-shadow: var(--accent-glow);
+}
+.lightbox-close svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+}
+
+.lightbox-frame {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  background: #000;
+  border-radius: 3px;
+  overflow: hidden;
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+.lightbox.is-portrait .lightbox-frame { aspect-ratio: 9 / 16; }
+.lightbox-frame iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
 }
 
 /* ============================================================
@@ -767,8 +887,10 @@ section { padding: 130px 0; }
 }
 
 
+.about-image picture { display: block; }
 .about-image img {
   width: 100%;
+  height: auto;
   aspect-ratio: 3 / 4;
   object-fit: cover;
   border-radius: 3px;
@@ -816,10 +938,10 @@ section { padding: 130px 0; }
 }
 .skills-text {
   font-family: var(--font-heading);
-  font-size: 0.75rem;
+  font-size: 0.88rem;
   letter-spacing: 0.05em;
-  color: rgba(255, 255, 255, 0.6);
-  line-height: 2;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.9;
   margin-bottom: 38px;
 }
 .skills-dot {
@@ -980,7 +1102,7 @@ section { padding: 130px 0; }
 }
 .form-group input::placeholder,
 .form-group textarea::placeholder {
-  color: rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.32);
 }
 .form-submit {
   width: 100%;
@@ -994,6 +1116,12 @@ section { padding: 130px 0; }
   color: #fff;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35);
 }
+.form-error {
+  font-size: 0.84rem;
+  line-height: 1.6;
+  color: #ff8fb4;
+}
+.form-error a { color: inherit; }
 .form-success {
   display: none;
   text-align: center;
@@ -1074,9 +1202,17 @@ footer {
     grid-template-columns: 1fr;
     gap: 48px;
   }
+  .about-image { max-width: 560px; }
   .about-image img {
-    aspect-ratio: 16 / 9;
+    aspect-ratio: 4 / 5;
+    object-position: center 25%;
   }
+}
+
+/* Short screens (small laptops, landscape phones): drop the scroll cue
+   so it never collides with the hero buttons */
+@media (max-height: 800px) {
+  .hero-scroll { display: none; }
 }
 
 @media (max-width: 768px) {
@@ -1108,6 +1244,7 @@ footer {
   .hero-actions { flex-direction: column; align-items: center; }
 
   .portfolio-grid { grid-template-columns: 1fr; }
+  .portfolio-card.is-orphan { width: 100%; }
 
   .footer-container { justify-content: center; text-align: center; }
   .footer-links { justify-content: center; }
@@ -1115,4 +1252,23 @@ footer {
 
 @media (max-width: 480px) {
   .portfolio-filters { gap: 4px; }
+
+  /* Keep "VFX · AI GENERATIVE · FILM" on one line on phones */
+  .hero-label {
+    gap: 10px;
+    letter-spacing: 0.3em;
+  }
+  .hero-label::before,
+  .hero-label::after { width: 18px; }
+}
+
+/* ============================================================
+   REDUCED MOTION — respects the OS "reduce motion" setting
+   (script.js also skips smooth scroll, parallax and entrances)
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  .hero-grain,
+  .scroll-line { animation: none; }
+  .lightbox,
+  .lightbox-inner { transition: none; }
 }
