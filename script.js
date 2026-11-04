@@ -42,7 +42,7 @@ function splitWords(el) {
     if (i < words.length - 1) el.appendChild(document.createTextNode(' '));
   });
 }
-if (!reduceMotion) {
+{
   const heroName = document.querySelector('.hero-name');
   if (heroName) {
     heroName.setAttribute('aria-label', heroName.textContent.replace(/\s+/g, ' ').trim());
@@ -114,7 +114,7 @@ document.querySelectorAll('.track').forEach((track, t) => {
 });
 
 const revealTargets = document.querySelectorAll('.reveal, .reveal-head, .reveal-picture, .still, .contact-form-wrap');
-if (reduceMotion || !('IntersectionObserver' in window)) {
+if (!('IntersectionObserver' in window)) {
   revealTargets.forEach(el => el.classList.add('is-in'));
 } else {
   const revealObserver = new IntersectionObserver(entries => {
@@ -175,7 +175,7 @@ function select(film) {
   stagePlay.setAttribute('aria-label', `Play ${film.dataset.title}`);
 
   const src = posterFor(film);
-  if (reduceMotion || !posterA.getAttribute('src')) {
+  if (!posterA.getAttribute('src')) {
     posterA.src = src;
     return;
   }

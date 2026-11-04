@@ -607,12 +607,14 @@ button { cursor: pointer; background: none; border: 0; padding: 0; }
 .js .reveal-picture.is-in, .js .still.is-in .still-open { clip-path: inset(0 0 0 0); }
 
 @media (prefers-reduced-motion: reduce) {
+  /* people who turn animation off still get fades and focus pulls; nothing travels */
   html { scroll-behavior: auto; }
-  *, *::before, *::after { transition-duration: 0ms !important; transition-delay: 0ms !important; animation: none !important; }
-  .js .hero-name .ch, .js .reveal-head .wd, .js .reveal, .js .reveal-picture, .js .still,
-  .js .still .still-open, .js .still figcaption, .js .hero-lead, .js .hero-actions,
-  .js .wordmark, .js .site-nav, .js .menu-btn { opacity: 1; translate: none; scale: none; filter: none; clip-path: none; }
-  .js .hero-reel video { opacity: 1; scale: none; filter: none; }
+  .js .hero-name .ch, .js .reveal-head .wd, .js .reveal, .js .hero-lead, .js .hero-actions { translate: none; }
+  .js .hero-reel video { scale: none; }
+  .stage-poster { animation: none; }
+  .stage-poster-next { translate: none; }
+  .film-pick:hover .film-title { translate: none; }
+  .text-link::after, .site-nav a::after { transition-duration: 0ms; }
   .still img, .about-portrait img { translate: none !important; }
 }
 
