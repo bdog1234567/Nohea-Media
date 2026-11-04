@@ -412,12 +412,14 @@ if (!reduceMotion) {
   function frame(time) {
     if (window.lenis) window.lenis.raf(time);
     const y = window.lenis ? window.lenis.animatedScroll : window.scrollY;
-    if (y !== lastY) {
+    const h = vh();
+    // only on screen-sized viewports (page-capture tools render one giant window)
+    if (y !== lastY && h <= 1600) {
       lastY = y;
-      const h = vh();
+      const cap = Math.min(140, h * 0.12);
       // hero: the name lifts away faster than the reel, which lags behind
       if (hero && y < h * 1.4) {
-        if (heroCopy) heroCopy.style.translate = `0 ${(-y * 0.18).toFixed(1)}px`;
+        if (heroCopy) heroCopy.style.translate = `0 ${Math.max(-h * 0.3, -y * 0.18).toFixed(1)}px`;
         if (heroReel && desktop.matches) heroReel.style.translate = `0 ${(y * 0.22).toFixed(1)}px`;
         else if (heroReel) heroReel.style.translate = `0 ${(y * 0.35).toFixed(1)}px`;
       }
@@ -425,7 +427,8 @@ if (!reduceMotion) {
       for (const l of layers) {
         const offset = (l.top + l.h / 2) - (y + h / 2);
         if (Math.abs(offset) > l.h + h) continue;
-        l.el.style.translate = `0 ${(-offset * l.speed).toFixed(1)}px`;
+        const shift = Math.max(-cap, Math.min(cap, -offset * l.speed));
+        l.el.style.translate = `0 ${shift.toFixed(1)}px`;
       }
       // pictures sliding inside their frames
       for (const p of insets) {
