@@ -3,13 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Nohea Media | Braden Di Mauro — VFX & AI Content Creator</title>
-  <meta name="description" content="Nohea Media — VFX and AI generative video by Braden Di Mauro. Visual storytelling through cutting-edge technology." />
+  <title>Braden Di Mauro | AI Filmmaker &amp; VFX Artist | Nohea Media</title>
+  <meta name="description" content="Braden Di Mauro is an AI filmmaker and VFX artist behind Nohea Media, currently a Creative Director at Meta. Spec campaigns, VFX and generative stills." />
+  <meta name="theme-color" content="#0b0b0c" />
   <link rel="canonical" href="https://noheamedia.com/" />
 
   <!-- Open Graph -->
-  <meta property="og:title" content="Nohea Media | Braden Di Mauro" />
-  <meta property="og:description" content="VFX Artist & AI Generative Content Creator" />
+  <meta property="og:title" content="Braden Di Mauro | Nohea Media" />
+  <meta property="og:description" content="AI filmmaker and VFX artist. Films that don't look like AI." />
   <meta property="og:url" content="https://noheamedia.com/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Nohea Media" />
@@ -19,8 +20,8 @@
 
   <!-- Twitter Card (also used by iMessage) -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Nohea Media | Braden Di Mauro" />
-  <meta name="twitter:description" content="VFX Artist & AI Generative Content Creator" />
+  <meta name="twitter:title" content="Braden Di Mauro | Nohea Media" />
+  <meta name="twitter:description" content="AI filmmaker and VFX artist. Films that don't look like AI." />
   <meta name="twitter:image" content="https://noheamedia.com/og-image.png" />
 
   <!-- Structured data -->
@@ -31,14 +32,14 @@
     "name": "Braden Di Mauro",
     "url": "https://noheamedia.com/",
     "image": "https://noheamedia.com/og-image.png",
-    "jobTitle": "VFX Artist & AI Generative Content Creator",
+    "jobTitle": "AI Filmmaker & VFX Artist",
     "email": "bradendimauro@gmail.com",
     "worksFor": {
       "@type": "Organization",
       "name": "Nohea Media",
       "url": "https://noheamedia.com/"
     },
-    "knowsAbout": ["VFX","Compositing","AI Generative Video","Motion Graphics","Color Grading","After Effects","Nuke","DaVinci Resolve","Cinema 4D"],
+    "knowsAbout": ["AI Filmmaking","Generative Video","VFX","Compositing","Color Grading","Motion Graphics","ComfyUI","Midjourney","Nuke","After Effects","DaVinci Resolve","Cinema 4D"],
     "sameAs": [
       "https://www.youtube.com/@NoheaMediaFilms",
       "https://www.instagram.com/bradendimauro/",
@@ -47,47 +48,57 @@
   }
   </script>
 
-  <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png" />
   <link rel="apple-touch-icon" href="favicon.png" />
 
-  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@300;400;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="style.css?v=16" />
+  <script>
+    document.documentElement.classList.add('js');
+    /* if script.js never runs, show everything instead of leaving it hidden */
+    setTimeout(function () { if (!window.__noheaReady) document.documentElement.classList.remove('js'); }, 2500);
+  </script>
+  <link rel="stylesheet" href="style.css?v=23" />
 </head>
 <body>
-  <div id="preloader" aria-hidden="true"></div>
-  <div id="scroll-progress" aria-hidden="true"></div>
 
-  <!-- ===================== NAV ===================== -->
-  <nav id="navbar" role="navigation" aria-label="Main navigation">
-    <div class="nav-container">
-      <a href="#hero" class="nav-logo">NOHEA MEDIA</a>
-
-      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation" aria-expanded="false">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
-
-      <ul class="nav-links" id="navLinks" role="list">
-        <li><a href="#portfolio">Work</a></li>
+  <header class="bar">
+    <a href="#top" class="wordmark" aria-label="Nohea Media, back to top">
+      <img src="logo.png" alt="" width="1089" height="710" class="wordmark-mark" />
+      <span>Nohea Media</span>
+    </a>
+    <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="siteNav">Menu</button>
+    <nav class="site-nav" id="siteNav" aria-label="Main">
+      <ul>
+        <li><a href="#films">Films</a></li>
+        <li><a href="#stills">Stills</a></li>
         <li><a href="#about">About</a></li>
         <li><a href="#contact">Contact</a></li>
-        <li><a href="#contact" class="nav-cta">Hire Me</a></li>
       </ul>
-    </div>
-  </nav>
+    </nav>
+  </header>
 
   <main>
 
-    <!-- ===================== HERO ===================== -->
-    <section id="hero" aria-label="Hero">
-      <div class="hero-bg" aria-hidden="true">
-        <video class="hero-video" autoplay muted loop playsinline preload="auto" poster="og-image.png"
+    <!-- ============ HERO ============ -->
+    <section id="top" class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <h1 class="hero-name" id="hero-title">
+          <span class="mask"><span class="line" style="--i:0">Braden</span></span>
+          <span class="mask"><span class="line" style="--i:1">Di Mauro</span></span>
+        </h1>
+        <p class="hero-lead">AI filmmaker and VFX artist behind Nohea Media, currently a Creative Director at Meta. I make films that don't look like AI.</p>
+        <div class="hero-actions">
+          <a href="#films" class="btn">Watch the films</a>
+          <a href="#contact" class="text-link">Get in touch</a>
+        </div>
+      </div>
+
+      <figure class="hero-reel">
+        <video class="hero-video" autoplay muted loop playsinline preload="auto" poster="hero-poster.jpg"
+               aria-label="Showreel: fashion and street scenes from Braden's recent work"
                data-src-desktop="newhero.mp4" data-src-mobile="newhero-mobile.mp4"></video>
         <script>
           /* Serve a lighter hero video to phones / data-saver connections */
@@ -100,367 +111,299 @@
             v.src = (smallScreen || saveData) ? v.dataset.srcMobile : v.dataset.srcDesktop;
           })();
         </script>
-        <div class="hero-gradient"></div>
-        <div class="hero-grain"></div>
-      </div>
+      </figure>
+    </section>
 
-      <div class="hero-content">
-        <p class="hero-label">VFX &nbsp;·&nbsp; AI GENERATIVE &nbsp;·&nbsp; FILM</p>
-        <img src="logo.png" alt="Nohea Media" class="hero-logo" />
-        <h1 class="hero-title">NOHEA MEDIA</h1>
-        <hr class="hero-divider" />
-        <p class="hero-name">Braden Di Mauro</p>
-        <p class="hero-tagline">Visual storytelling through cutting-edge technology</p>
-        <div class="hero-actions">
-          <a href="#portfolio" class="btn btn-hero-primary">View My Work</a>
-          <a href="#contact" class="btn btn-hero-ghost">Get In Touch</a>
+    <!-- ============ FILMS ============ -->
+    <section id="films" class="films section" aria-labelledby="films-title">
+      <div class="films-index">
+        <h2 id="films-title" class="head reveal-head"><span class="mask"><span class="line">Films</span></span></h2>
+        <p class="lead reveal">Spec campaigns made with generative video, VFX shots, and the edits that hold them together.</p>
+
+        <div class="film-group">
+          <h3 class="group-title reveal">AI generative</h3>
+          <ul class="film-list">
+            <li class="film reveal" data-video-id="crHRXVX3aHU" data-shape="tall" data-title="H&amp;M spec ad" data-meta="Spec ad, vertical">
+              <button class="film-pick" type="button">
+                <span class="film-title">H&amp;M spec ad</span>
+                <span class="film-meta">Spec ad, vertical</span>
+              </button>
+              <div class="film-media">
+                <img src="https://i.ytimg.com/vi/crHRXVX3aHU/oar2.jpg" alt="Still from the H&amp;M spec ad" loading="lazy" width="1080" height="1920" />
+              </div>
+            </li>
+            <li class="film reveal" data-video-id="mf-8dzWB6WU" data-shape="tall" data-title="Saint Laurent spec ad" data-meta="Spec ad, vertical">
+              <button class="film-pick" type="button">
+                <span class="film-title">Saint Laurent spec ad</span>
+                <span class="film-meta">Spec ad, vertical</span>
+              </button>
+              <div class="film-media">
+                <img src="https://i.ytimg.com/vi/mf-8dzWB6WU/oar2.jpg" alt="Still from the Saint Laurent spec ad" loading="lazy" width="1068" height="1920" />
+              </div>
+            </li>
+            <li class="film reveal" data-video-id="7QEYkuHp5iA" data-shape="wide" data-title="South Bay real estate spec ad" data-meta="Spec ad">
+              <button class="film-pick" type="button">
+                <span class="film-title">South Bay real estate spec ad</span>
+                <span class="film-meta">Spec ad</span>
+              </button>
+              <div class="film-media">
+                <img src="https://i.ytimg.com/vi/7QEYkuHp5iA/maxresdefault.jpg" alt="Still from the South Bay real estate spec ad" loading="lazy" width="1280" height="720" />
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="film-group">
+          <h3 class="group-title reveal">VFX</h3>
+          <ul class="film-list">
+            <li class="film reveal" data-video-id="ACfLZuihFbk" data-shape="wide" data-title="Fire VFX" data-meta="VFX shot">
+              <button class="film-pick" type="button">
+                <span class="film-title">Fire VFX</span>
+                <span class="film-meta">VFX shot</span>
+              </button>
+              <div class="film-media">
+                <img src="https://i.ytimg.com/vi/ACfLZuihFbk/maxresdefault.jpg" alt="Still from the Fire VFX shot" loading="lazy" width="1280" height="720" />
+              </div>
+            </li>
+            <li class="film reveal" data-video-id="tlSXv_czMxo" data-shape="wide" data-title="3D tracking" data-meta="Camera tracking">
+              <button class="film-pick" type="button">
+                <span class="film-title">3D tracking</span>
+                <span class="film-meta">Camera tracking</span>
+              </button>
+              <div class="film-media">
+                <img src="https://i.ytimg.com/vi/tlSXv_czMxo/maxresdefault.jpg" alt="Still from the 3D tracking shot" loading="lazy" width="1280" height="720" />
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="film-group">
+          <h3 class="group-title reveal">Editing and motion</h3>
+          <ul class="film-list">
+            <li class="film reveal" data-video-id="-38tTSXcPxs" data-shape="wide" data-title="Director reel" data-meta="Reel">
+              <button class="film-pick" type="button">
+                <span class="film-title">Director reel</span>
+                <span class="film-meta">Reel</span>
+              </button>
+              <div class="film-media">
+                <img src="https://i.ytimg.com/vi/-38tTSXcPxs/maxresdefault.jpg" alt="Still from the director reel" loading="lazy" width="1280" height="720" />
+              </div>
+            </li>
+            <li class="film reveal" data-video-id="QGd1htOqKSw" data-shape="wide" data-title="Logo animation" data-meta="Motion design">
+              <button class="film-pick" type="button">
+                <span class="film-title">Logo animation</span>
+                <span class="film-meta">Motion design</span>
+              </button>
+              <div class="film-media">
+                <img src="https://i.ytimg.com/vi/QGd1htOqKSw/maxresdefault.jpg" alt="Still from the logo animation" loading="lazy" width="1280" height="720" />
+              </div>
+            </li>
+          </ul>
         </div>
       </div>
 
-      <div class="hero-scroll" aria-hidden="true">
-        <span>Scroll</span>
-        <div class="scroll-line"></div>
+      <!-- Desktop stage: filled by script.js from the selected film -->
+      <div class="films-stage" id="filmStage" hidden>
+        <div class="stage-screen">
+          <img class="stage-poster" alt="" />
+          <img class="stage-poster stage-poster-next" alt="" />
+          <button class="play" type="button" aria-label="Play film">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z"/></svg>
+          </button>
+        </div>
+        <p class="stage-caption"><span class="stage-title"></span> <span class="stage-meta"></span></p>
       </div>
     </section>
 
-    <!-- ===================== MARQUEE ===================== -->
-    <div class="marquee-strip" aria-hidden="true">
-      <div class="marquee-track">
-        <span class="marquee-item">Nohea Media</span><span class="marquee-dot">✦</span>
-        <span class="marquee-item">VFX</span><span class="marquee-dot">✦</span>
-        <span class="marquee-item">AI Generative</span><span class="marquee-dot">✦</span>
-        <span class="marquee-item">Film</span><span class="marquee-dot">✦</span>
-        <span class="marquee-item">Braden Di Mauro</span><span class="marquee-dot">✦</span>
-        <span class="marquee-item">Nohea Media</span><span class="marquee-dot">✦</span>
-        <span class="marquee-item">VFX</span><span class="marquee-dot">✦</span>
-        <span class="marquee-item">AI Generative</span><span class="marquee-dot">✦</span>
-        <span class="marquee-item">Film</span><span class="marquee-dot">✦</span>
-        <span class="marquee-item">Braden Di Mauro</span><span class="marquee-dot">✦</span>
-        <span class="marquee-item">Nohea Media</span><span class="marquee-dot">✦</span>
-        <span class="marquee-item">VFX</span><span class="marquee-dot">✦</span>
-        <span class="marquee-item">AI Generative</span><span class="marquee-dot">✦</span>
-        <span class="marquee-item">Film</span><span class="marquee-dot">✦</span>
-        <span class="marquee-item">Braden Di Mauro</span><span class="marquee-dot">✦</span>
+    <!-- ============ STILLS ============ -->
+    <section id="stills" class="stills section" aria-labelledby="stills-title">
+      <div class="stills-head">
+        <h2 id="stills-title" class="head reveal-head"><span class="mask"><span class="line">None of these were photographed.</span></span></h2>
+        <p class="lead reveal">Generative stills from 2026. Lace, wind, weather and a single source of light, made in Midjourney and judged like photography.</p>
       </div>
-    </div>
 
-    <!-- ===================== PORTFOLIO ===================== -->
-    <section id="portfolio" aria-label="Portfolio">
-      <div class="container">
-        <div class="section-header">
-          <p class="section-label">Selected Work</p>
-          <h2 class="section-title">Portfolio</h2>
+      <div class="wall">
+        <div class="track track-a">
+          <figure class="still">
+            <button class="still-open" type="button" aria-label="View larger: lace veil by candlelight">
+              <img src="stills/lace-veil-candles.jpg" width="1067" height="1600" loading="lazy" alt="A woman under a black jeweled lace veil, candles burning behind her in a dark church" />
+            </button>
+            <figcaption>Lace veil, candlelight</figcaption>
+          </figure>
+          <figure class="still">
+            <button class="still-open" type="button" aria-label="View larger: the open door">
+              <img src="stills/open-door.jpg" width="1600" height="1600" loading="lazy" alt="A man in silhouette at an open door, cold light spilling across a dark kitchen floor" />
+            </button>
+            <figcaption>The open door</figcaption>
+          </figure>
+          <figure class="still">
+            <button class="still-open" type="button" aria-label="View larger: office fire">
+              <img src="stills/office-fire.jpg" width="1278" height="1600" loading="lazy" alt="A woman in a black hood on a phone call at an office desk, a wastebasket burning beside her" />
+            </button>
+            <figcaption>Burning World, office</figcaption>
+          </figure>
         </div>
 
-        <div class="portfolio-filters" role="group" aria-label="Filter by category">
-          <button class="filter-btn active" data-filter="all">All</button>
-          <button class="filter-btn" data-filter="vfx">VFX</button>
-          <button class="filter-btn" data-filter="ai">AI Generative</button>
-          <button class="filter-btn" data-filter="editing">Editing / Motion</button>
+        <div class="track track-b">
+          <figure class="still">
+            <button class="still-open" type="button" aria-label="View larger: veil in wind">
+              <img src="stills/veil-in-wind.jpg" width="1024" height="1024" loading="lazy" alt="Long black hair and sheer black fabric whipping in wind against a pale sky" />
+            </button>
+            <figcaption>Veil in wind</figcaption>
+          </figure>
+          <figure class="still">
+            <button class="still-open" type="button" aria-label="View larger: nun on a sea cliff">
+              <img src="stills/nun-sea-cliff.jpg" width="1067" height="1600" loading="lazy" alt="A figure in a black habit standing on a rocky cliff in pale fog" />
+            </button>
+            <figcaption>Sea cliff</figcaption>
+          </figure>
+          <figure class="still">
+            <button class="still-open" type="button" aria-label="View larger: red figure in cathedral fog">
+              <img src="stills/cathedral-fog-red.jpg" width="1278" height="1600" loading="lazy" alt="A small figure in a red hood standing in blue fog before a cathedral at night" />
+            </button>
+            <figcaption>Cathedral fog</figcaption>
+          </figure>
+          <figure class="still">
+            <button class="still-open" type="button" aria-label="View larger: lace net">
+              <img src="stills/lace-net.jpg" width="1024" height="1024" loading="lazy" alt="Close portrait through a black lace net veil, red lips, cool blue light" />
+            </button>
+            <figcaption>Lace net</figcaption>
+          </figure>
         </div>
 
-        <div class="portfolio-grid">
+        <div class="track track-c">
+          <figure class="still">
+            <button class="still-open" type="button" aria-label="View larger: jeweled cross">
+              <img src="stills/jeweled-cross.jpg" width="1067" height="1600" loading="lazy" alt="Portrait with a rhinestone cross set on the forehead under a dark veil" />
+            </button>
+            <figcaption>Jeweled cross</figcaption>
+          </figure>
+          <figure class="still">
+            <button class="still-open" type="button" aria-label="View larger: garage fog">
+              <img src="stills/garage-fog.jpg" width="1600" height="1600" loading="lazy" alt="A figure in a long black coat walking through a flooded, foggy parking garage toward headlights" />
+            </button>
+            <figcaption>Garage fog</figcaption>
+          </figure>
+          <figure class="still">
+            <button class="still-open" type="button" aria-label="View larger: shoreline">
+              <img src="stills/nun-shoreline.jpg" width="1067" height="1600" loading="lazy" alt="A faceless figure in a black habit on a grassy shoreline, the sea glittering behind" />
+            </button>
+            <figcaption>Shoreline</figcaption>
+          </figure>
+          <figure class="still">
+            <button class="still-open" type="button" aria-label="View larger: veil across the eyes">
+              <img src="stills/veil-across-eyes.jpg" width="1024" height="1024" loading="lazy" alt="Close portrait with a band of black organza blowing across the eyes" />
+            </button>
+            <figcaption>Across the eyes</figcaption>
+          </figure>
+          <figure class="still">
+            <button class="still-open" type="button" aria-label="View larger: dusk veil">
+              <img src="stills/dusk-veil.jpg" width="1024" height="1024" loading="lazy" alt="A huge black veil spreading out against a deep blue dusk sky" />
+            </button>
+            <figcaption>Dusk veil</figcaption>
+          </figure>
+        </div>
+      </div>
 
-          <!-- ── Card 1 ── AI Generative -->
-          <article class="portfolio-card" data-category="ai" data-video-id="crHRXVX3aHU">
-            <div class="card-media">
-              <div class="card-thumbnail">
-                <img alt="H&amp;M Spec Ad" class="thumb-img" loading="lazy" />
-                <div class="card-overlay">
-                  <button class="play-btn" aria-label="Play H&amp;M Spec Ad">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
-                  </button>
-                </div>
-                <div class="card-info-overlay">
-                  <span class="card-tag">AI Generative</span>
-                  <h3 class="card-title">H&amp;M Spec Ad</h3>
-                </div>
-              </div>
-            </div>
-          </article>
-
-          <!-- ── Card 2 ── AI Generative -->
-          <article class="portfolio-card" data-category="ai" data-video-id="mf-8dzWB6WU">
-            <div class="card-media">
-              <div class="card-thumbnail">
-                <img alt="Saint Laurent Spec Ad" class="thumb-img" loading="lazy" />
-                <div class="card-overlay">
-                  <button class="play-btn" aria-label="Play Saint Laurent Spec Ad">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
-                  </button>
-                </div>
-                <div class="card-info-overlay">
-                  <span class="card-tag">AI Generative</span>
-                  <h3 class="card-title">Saint Laurent Spec Ad</h3>
-                </div>
-              </div>
-            </div>
-          </article>
-
-          <!-- ── Card 3 ── AI Generative -->
-          <article class="portfolio-card" data-category="ai" data-video-id="7QEYkuHp5iA">
-            <div class="card-media">
-              <div class="card-thumbnail">
-                <img alt="South Bay Real Estate Spec Ad" class="thumb-img" loading="lazy" />
-                <div class="card-overlay">
-                  <button class="play-btn" aria-label="Play South Bay Real Estate Spec Ad">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
-                  </button>
-                </div>
-                <div class="card-info-overlay">
-                  <span class="card-tag">AI Generative</span>
-                  <h3 class="card-title">South Bay Real Estate Spec Ad</h3>
-                </div>
-              </div>
-            </div>
-          </article>
-
-          <!-- ── Card 4 ── VFX -->
-          <article class="portfolio-card" data-category="vfx" data-video-id="ACfLZuihFbk">
-            <div class="card-media">
-              <div class="card-thumbnail">
-                <img alt="Fire VFX" class="thumb-img" loading="lazy" />
-                <div class="card-overlay">
-                  <button class="play-btn" aria-label="Play Fire VFX">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
-                  </button>
-                </div>
-                <div class="card-info-overlay">
-                  <span class="card-tag">VFX</span>
-                  <h3 class="card-title">Fire VFX</h3>
-                </div>
-              </div>
-            </div>
-          </article>
-
-          <!-- ── Card 5 ── VFX -->
-          <article class="portfolio-card" data-category="vfx" data-video-id="tlSXv_czMxo">
-            <div class="card-media">
-              <div class="card-thumbnail">
-                <img alt="3D Tracking" class="thumb-img" loading="lazy" />
-                <div class="card-overlay">
-                  <button class="play-btn" aria-label="Play 3D Tracking">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
-                  </button>
-                </div>
-                <div class="card-info-overlay">
-                  <span class="card-tag">VFX</span>
-                  <h3 class="card-title">3D Tracking</h3>
-                </div>
-              </div>
-            </div>
-          </article>
-
-          <!-- ── Card 6 ── Editing / Motion -->
-          <article class="portfolio-card" data-category="editing" data-video-id="-38tTSXcPxs">
-            <div class="card-media">
-              <div class="card-thumbnail">
-                <img alt="Director Reel" class="thumb-img" loading="lazy" />
-                <div class="card-overlay">
-                  <button class="play-btn" aria-label="Play Director Reel">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
-                  </button>
-                </div>
-                <div class="card-info-overlay">
-                  <span class="card-tag">Editing / Motion</span>
-                  <h3 class="card-title">Director Reel</h3>
-                </div>
-              </div>
-            </div>
-          </article>
-
-          <!-- ── Card 7 ── Editing / Motion -->
-          <article class="portfolio-card" data-category="editing" data-video-id="QGd1htOqKSw">
-            <div class="card-media">
-              <div class="card-thumbnail">
-                <img alt="Logo Animation" class="thumb-img" loading="lazy" />
-                <div class="card-overlay">
-                  <button class="play-btn" aria-label="Play Logo Animation">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
-                  </button>
-                </div>
-                <div class="card-info-overlay">
-                  <span class="card-tag">Editing / Motion</span>
-                  <h3 class="card-title">Logo Animation</h3>
-                </div>
-              </div>
-            </div>
-          </article>
-
-        </div><!-- /portfolio-grid -->
-      </div><!-- /container -->
+      <dialog class="viewer" id="viewer" aria-label="Still viewer">
+        <figure class="viewer-figure">
+          <img class="viewer-img" alt="" />
+          <figcaption class="viewer-caption"></figcaption>
+        </figure>
+        <div class="viewer-controls">
+          <button type="button" class="viewer-btn" data-step="-1">Previous</button>
+          <button type="button" class="viewer-btn" data-step="1">Next</button>
+          <button type="button" class="viewer-btn viewer-close">Close</button>
+        </div>
+      </dialog>
     </section>
 
-    <!-- ===================== ABOUT ===================== -->
-    <section id="about" aria-label="About">
-      <div class="container">
-        <div class="about-grid">
+    <!-- ============ ABOUT ============ -->
+    <section id="about" class="about section" aria-labelledby="about-title">
+      <figure class="about-portrait reveal-picture">
+        <img src="2G9A5895-2.JPEG" width="1713" height="1486" loading="lazy" alt="Braden Di Mauro, in a black shirt, standing in front of ivy" />
+      </figure>
 
-          <div class="about-image">
-            <img src="2G9A5895-2.JPEG" alt="Braden Di Mauro" />
+      <div class="about-text">
+        <h2 id="about-title" class="head reveal-head"><span class="mask"><span class="line">Drama, yes. Impossible, no.</span></span></h2>
+        <p class="reveal">I'm Braden Di Mauro, a VFX artist and AI filmmaker. By day I'm a Creative Director at Meta. Nohea Media is where I put the work that's mine: spec campaigns, VFX shots and generative stills.</p>
+        <p class="reveal">My rule is simple. If a real photographer couldn't have shot it, I pull it back. Rain, fog, wet streets, one hard light, a contained fire: all the drama, none of the tells.</p>
+        <p class="reveal">I came up in compositing and color, so the AI sits inside a real pipeline. Roto, tracking and comps that used to take days now take hours, and the time goes back into the frame.</p>
+
+        <dl class="tools reveal">
+          <div>
+            <dt>Craft</dt>
+            <dd>Nuke, After Effects, DaVinci Resolve, Cinema 4D, Photoshop</dd>
           </div>
-
-          <div class="about-content">
-            <p class="section-label">About Me</p>
-            <h2 class="section-title">The Artist<br>Behind the Lens</h2>
-            <p class="about-subtitle">VFX Artist &amp; AI Content Creator</p>
-
-            <div class="about-bio">
-              <p>
-                Hi, I'm Braden Di Mauro — the creator behind Nohea Media. The post-production industry is shifting fast, and AI is at the center of it. I believe learning these tools isn't about replacing the creator or the artist — it's about enhancing their vision with speed and precision.
-              </p>
-              <p>
-                That's why I actively integrate AI into my editing and VFX workflow, always looking for ways to streamline processes that used to take hours — from rotoscoping and compositing to motion tracking and content generation — so I can spend more time on the creative work that matters. Traditional craft meets modern tools, better results, faster delivery.
-              </p>
-            </div>
-
-            <p class="skills-label">Expertise</p>
-            <p class="skills-text">
-              After Effects <span class="skills-dot">·</span>
-              Nuke <span class="skills-dot">·</span>
-              DaVinci Resolve <span class="skills-dot">·</span>
-              Cinema 4D <span class="skills-dot">·</span>
-              Runway ML <span class="skills-dot">·</span>
-              Kling AI <span class="skills-dot">·</span>
-              Sora <span class="skills-dot">·</span>
-              Midjourney <span class="skills-dot">·</span>
-              Photoshop <span class="skills-dot">·</span>
-              Compositing <span class="skills-dot">·</span>
-              Motion Graphics <span class="skills-dot">·</span>
-              Color Grading
-            </p>
-
-            <div>
-              <a href="#contact" class="btn btn-primary btn-about">Work With Me</a>
-            </div>
+          <div>
+            <dt>Generative</dt>
+            <dd>ComfyUI, Midjourney, Kling, Seedance, Flux, Runway, Sora</dd>
           </div>
-
-        </div>
+        </dl>
       </div>
     </section>
 
-    <!-- ===================== CONTACT ===================== -->
-    <section id="contact" aria-label="Contact">
-      <div class="container">
-        <div class="contact-grid">
+    <!-- ============ CONTACT ============ -->
+    <section id="contact" class="contact section" aria-labelledby="contact-title">
+      <div class="contact-text">
+        <h2 id="contact-title" class="head reveal-head"><span class="mask"><span class="line">Let's make something real.</span></span></h2>
+        <p class="lead reveal">Spec campaigns, VFX, AI film, or the workflow behind them. Tell me what you're making.</p>
+        <p class="contact-email reveal"><a href="mailto:bradendimauro@gmail.com">bradendimauro@gmail.com</a></p>
+        <ul class="socials reveal">
+          <li><a href="https://www.youtube.com/@NoheaMediaFilms" target="_blank" rel="noopener noreferrer">YouTube</a></li>
+          <li><a href="https://www.instagram.com/bradendimauro/" target="_blank" rel="noopener noreferrer">Instagram</a></li>
+          <li><a href="https://www.linkedin.com/in/bradendimauro/" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+        </ul>
+      </div>
 
-          <div class="contact-info">
-            <p class="section-label">Get In Touch</p>
-            <h2 class="section-title">Let's Create<br>Something Bold</h2>
-            <p class="contact-tagline">
-              Open for freelance projects, brand collaborations, and creative partnerships.
-              Whether it's VFX work, AI-generated content, or something entirely new — let's talk.
-            </p>
+      <div class="contact-form-wrap reveal">
+        <form id="contactForm" class="contact-form" action="https://api.web3forms.com/submit" method="POST">
+          <input type="hidden" name="access_key" value="bda8951d-df78-4dde-9ac9-9f0f84040e35" />
+          <input type="hidden" name="subject" value="New Contact from Nohea Media" />
+          <input type="hidden" name="from_name" value="Nohea Media Website" />
 
-            <div class="contact-details">
-              <!-- Replace with your actual email -->
-              <a href="mailto:bradendimauro@gmail.com" class="contact-detail">
-                <span class="contact-detail-icon">
-                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
-                </span>
-                bradendimauro@gmail.com
-              </a>
-            </div>
-
-            <div class="social-links">
-              <!-- Replace # with your actual profile URLs -->
-              <a href="https://www.youtube.com/@NoheaMediaFilms" class="social-link" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.58 7.19c-.23-.86-.91-1.54-1.77-1.77C18.25 5 12 5 12 5s-6.25 0-7.81.42c-.86.23-1.54.91-1.77 1.77C2 8.75 2 12 2 12s0 3.25.42 4.81c.23.86.91 1.54 1.77 1.77C5.75 19 12 19 12 19s6.25 0 7.81-.42c.86-.23 1.54-.91 1.77-1.77C22 15.25 22 12 22 12s0-3.25-.42-4.81zM10 15V9l5.2 3-5.2 3z"/></svg>
-                YouTube
-              </a>
-<a href="https://www.instagram.com/bradendimauro/" class="social-link" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
-                Instagram
-              </a>
-              <a href="https://www.linkedin.com/in/bradendimauro/" class="social-link" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-                LinkedIn
-              </a>
-            </div>
+          <div class="field">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" required autocomplete="name" />
           </div>
-
-          <!-- Contact Form
-               For free form handling, use one of these options:
-               A) Formspree (formspree.io) — free 50 submissions/month:
-                  1. Create a free account at formspree.io
-                  2. Create a form and copy the endpoint URL
-                  3. Replace the action URL below with your endpoint
-               B) Netlify Forms (if deploying to Netlify) — free:
-                  1. Add  data-netlify="true"  to the <form> tag
-                  2. Remove the action attribute
-                  3. Netlify handles the rest automatically
-          -->
-          <div class="contact-form-wrapper">
-            <form
-              id="contactForm"
-              class="contact-form"
-              action="https://api.web3forms.com/submit"
-              method="POST"
-            >
-              <input type="hidden" name="access_key" value="bda8951d-df78-4dde-9ac9-9f0f84040e35" />
-              <input type="hidden" name="subject" value="New Contact from Nohea Media" />
-              <input type="hidden" name="from_name" value="Nohea Media Website" />
-              <div class="form-group">
-                <label for="name">Name</label>
-                <input type="text" id="name" name="name" placeholder="Your name" required autocomplete="name" />
-              </div>
-
-              <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" placeholder="your@email.com" required autocomplete="email" />
-              </div>
-
-              <div class="form-group">
-                <label for="project">Project Type</label>
-                <select id="project" name="project">
-                  <option value="" disabled selected>Select a project type</option>
-                  <option value="vfx">VFX / Compositing</option>
-                  <option value="ai-video">AI Generative Video</option>
-                  <option value="brand">Brand Content</option>
-                  <option value="music-video">Music Video</option>
-                  <option value="other">Other</option>
-                </select>
-              </div>
-
-              <div class="form-group">
-                <label for="message">Message</label>
-                <textarea id="message" name="message" placeholder="Tell me about your project..." required></textarea>
-              </div>
-
-              <button type="submit" class="btn btn-primary form-submit">Send Message</button>
-            </form>
-
-            <div id="formSuccess" class="form-success" role="status" aria-live="polite">
-              <p>Message sent — I'll be in touch soon.</p>
-            </div>
+          <div class="field">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required autocomplete="email" />
           </div>
-
+          <div class="field">
+            <label for="project">Project type</label>
+            <select id="project" name="project">
+              <option value="" selected>Choose one</option>
+              <option value="ai-film">AI film or spec ad</option>
+              <option value="vfx">VFX and compositing</option>
+              <option value="ai-workflow">AI workflow</option>
+              <option value="brand">Brand content</option>
+              <option value="music-video">Music video</option>
+              <option value="other">Something else</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="message">Message</label>
+            <textarea id="message" name="message" rows="5" required></textarea>
+          </div>
+          <button type="submit" class="btn form-submit">Send message</button>
+        </form>
+        <div id="formSuccess" class="form-success" role="status" aria-live="polite" hidden>
+          <p>Sent. I'll be in touch soon.</p>
         </div>
       </div>
     </section>
 
   </main>
 
-  <!-- ===================== FOOTER ===================== -->
-  <footer>
-    <div class="footer-container">
-      <a href="#hero" class="footer-logo">
-        <img src="logo.png" alt="Nohea Media" class="footer-logo-img" />
-      </a>
-      <p class="footer-copy">&copy; <span id="year"></span> Braden Di Mauro. All rights reserved.</p>
-      <ul class="footer-links" role="list">
-        <li><a href="#portfolio">Work</a></li>
-        <li><a href="#about">About</a></li>
-        <li><a href="#contact">Contact</a></li>
-      </ul>
-    </div>
+  <footer class="foot">
+    <a href="#top" class="foot-mark" aria-label="Back to top">
+      <img src="logo.png" alt="" width="1089" height="710" />
+    </a>
+    <p>&copy; <span id="year">2026</span> Braden Di Mauro, Nohea Media.</p>
+    <a href="#top" class="text-link">Back to top</a>
   </footer>
 
-  <div id="cursor-ring" aria-hidden="true"></div>
-
-  <script src="https://cdn.jsdelivr.net/npm/lenis@1/dist/lenis.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
-  <script src="script.js?v=7"></script>
+  <script src="script.js?v=12"></script>
 </body>
 </html>

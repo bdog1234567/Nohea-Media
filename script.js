@@ -1,397 +1,287 @@
 /* ============================================================
    NOHEA MEDIA — script.js
+   No libraries. Everything here is optional: without it the page
+   shows every film, still and line in its finished state.
    ============================================================ */
 
 'use strict';
 
-const isTouchDevice = 'ontouchstart' in window;
+window.__noheaReady = true;
 
-/* === Footer year === */
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+const desktop = window.matchMedia('(min-width: 900px)');
+
+/* ---------- footer year ---------- */
 const yearEl = document.getElementById('year');
 if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-/* === Scroll progress bar === */
-const scrollProgress = document.getElementById('scroll-progress');
-if (scrollProgress) {
+/* ---------- load sequence: over by ~1.2s ---------- */
+requestAnimationFrame(() => {
+  requestAnimationFrame(() => document.body.classList.add('is-loaded'));
+});
+
+/* ---------- phone menu ---------- */
+const menuBtn = document.getElementById('menuBtn');
+const siteNav = document.getElementById('siteNav');
+
+function setMenu(open) {
+  siteNav.classList.toggle('is-open', open);
+  menuBtn.setAttribute('aria-expanded', String(open));
+  menuBtn.textContent = open ? 'Close' : 'Menu';
+  document.body.style.overflow = open ? 'hidden' : '';
+}
+if (menuBtn && siteNav) {
+  menuBtn.addEventListener('click', () => setMenu(!siteNav.classList.contains('is-open')));
+  siteNav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setMenu(false)));
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && siteNav.classList.contains('is-open')) { setMenu(false); menuBtn.focus(); }
+  });
+}
+
+/* ---------- current section in the nav ---------- */
+const navLinks = [...document.querySelectorAll('.site-nav a[href^="#"]')];
+const navObserver = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    navLinks.forEach(a => {
+      if (a.getAttribute('href') === '#' + entry.target.id) a.setAttribute('aria-current', 'true');
+      else a.removeAttribute('aria-current');
+    });
+  });
+}, { rootMargin: '-45% 0px -50% 0px' });
+document.querySelectorAll('main section[id]').forEach(s => navObserver.observe(s));
+
+/* ---------- entrances: each section's parts arrive in reading order ---------- */
+function stagger(selector, step) {
+  document.querySelectorAll(selector).forEach(group => {
+    group.querySelectorAll(':scope .reveal, :scope .still').forEach((el, i) => {
+      el.style.setProperty('--d', `${Math.min(i, 8) * step}ms`);
+    });
+  });
+}
+stagger('.films-index', 70);
+stagger('.about-text', 90);
+stagger('.contact-text', 90);
+document.querySelectorAll('.track').forEach((track, t) => {
+  track.querySelectorAll('.still').forEach((el, i) => el.style.setProperty('--d', `${t * 120 + i * 60}ms`));
+});
+
+const revealTargets = document.querySelectorAll('.reveal, .reveal-head, .reveal-picture, .still, .contact-form-wrap');
+if (reduceMotion || !('IntersectionObserver' in window)) {
+  revealTargets.forEach(el => el.classList.add('is-in'));
+} else {
+  const revealObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add('is-in');
+      revealObserver.unobserve(entry.target);
+    });
+  }, { rootMargin: '0px 0px -10% 0px', threshold: 0.05 });
+  revealTargets.forEach(el => revealObserver.observe(el));
+}
+
+/* ============================================================
+   FILMS
+   Desktop: the list is the index and the stage shows the chosen film.
+   Phone: every film plays in its own frame.
+   ============================================================ */
+const films = [...document.querySelectorAll('.film')];
+const filmsSection = document.getElementById('films');
+const stage = document.getElementById('filmStage');
+const stageScreen = stage && stage.querySelector('.stage-screen');
+const posterA = stage && stage.querySelector('.stage-poster');
+const posterB = stage && stage.querySelector('.stage-poster-next');
+const stagePlay = stage && stage.querySelector('.play');
+const stageTitle = stage && stage.querySelector('.stage-title');
+const stageMeta = stage && stage.querySelector('.stage-meta');
+let current = null;
+let crossfadeTimer = 0;
+
+function posterFor(film) {
+  return film.querySelector('.film-media img').getAttribute('src');
+}
+
+function embed(film) {
+  const iframe = document.createElement('iframe');
+  iframe.src = `https://www.youtube.com/embed/${film.dataset.videoId}?autoplay=1&rel=0&playsinline=1`;
+  iframe.title = film.dataset.title;
+  iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+  iframe.allowFullscreen = true;
+  iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+  return iframe;
+}
+
+function stopStage() {
+  if (!stageScreen) return;
+  stageScreen.querySelectorAll('iframe').forEach(f => f.remove());
+  stageScreen.classList.remove('is-playing', 'is-tall-playing');
+}
+
+function select(film) {
+  if (!stage || film === current) return;
+  current = film;
+  films.forEach(f => f.classList.toggle('is-current', f === film));
+  stopStage();
+  stageScreen.dataset.shape = film.dataset.shape;
+  stageTitle.textContent = film.dataset.title;
+  stageMeta.textContent = film.dataset.meta;
+  stagePlay.setAttribute('aria-label', `Play ${film.dataset.title}`);
+
+  const src = posterFor(film);
+  if (reduceMotion || !posterA.getAttribute('src')) {
+    posterA.src = src;
+    return;
+  }
+  // slow crossfade: the next poster fades in over the current one, then takes its place
+  clearTimeout(crossfadeTimer);
+  posterB.classList.remove('is-in');
+  posterB.src = src;
+  const show = () => {
+    requestAnimationFrame(() => posterB.classList.add('is-in'));
+    crossfadeTimer = setTimeout(() => {
+      posterA.src = src;
+      posterB.classList.remove('is-in');
+    }, 1650);
+  };
+  if (posterB.complete) show(); else posterB.addEventListener('load', show, { once: true });
+}
+
+function playOnStage() {
+  if (!current) return;
+  stopStage();
+  stageScreen.appendChild(embed(current));
+  stageScreen.classList.add('is-playing');
+  if (current.dataset.shape === 'tall') stageScreen.classList.add('is-tall-playing');
+}
+
+function playInline(film) {
+  const media = film.querySelector('.film-media');
+  if (media.querySelector('iframe')) return;
+  films.forEach(f => {
+    const fr = f.querySelector('.film-media iframe');
+    if (fr && f !== film) { fr.remove(); f.querySelector('.film-media').classList.remove('is-playing'); }
+  });
+  media.appendChild(embed(film));
+  media.classList.add('is-playing');
+}
+
+// phone play buttons on every frame
+films.forEach(film => {
+  const media = film.querySelector('.film-media');
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'play';
+  btn.setAttribute('aria-label', `Play ${film.dataset.title}`);
+  btn.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z"/></svg>';
+  btn.addEventListener('click', () => playInline(film));
+  media.appendChild(btn);
+
+  const pick = film.querySelector('.film-pick');
+  pick.addEventListener('click', () => {
+    if (desktop.matches && stage) { select(film); playOnStage(); }
+    else playInline(film);
+  });
+  if (finePointer) pick.addEventListener('mouseenter', () => { if (desktop.matches && !stageScreen.classList.contains('is-playing')) select(film); });
+  pick.addEventListener('focus', () => { if (desktop.matches && !stageScreen.classList.contains('is-playing')) select(film); });
+});
+
+if (stage) {
+  stagePlay.addEventListener('click', playOnStage);
+  stage.hidden = false;
+  filmsSection.classList.add('has-stage');
+  select(films[0]);
+  desktop.addEventListener('change', () => { stopStage(); films.forEach(f => {
+    const fr = f.querySelector('.film-media iframe'); if (fr) fr.remove();
+  }); });
+}
+
+/* ============================================================
+   STILLS: the one light
+   The frame under the pointer, or nearest the middle of the screen,
+   is lit. Everything else waits in the dark.
+   ============================================================ */
+const wall = document.querySelector('.wall');
+const stills = [...document.querySelectorAll('.still')];
+let hovered = null;
+let ticking = false;
+
+function light(target) {
+  stills.forEach(s => s.classList.toggle('is-lit', s === target));
+}
+
+function lightNearestCentre() {
+  ticking = false;
+  if (hovered) return;
+  const mid = window.innerHeight / 2;
+  let best = null, bestDist = Infinity;
+  stills.forEach(s => {
+    const r = s.getBoundingClientRect();
+    if (r.bottom < 0 || r.top > window.innerHeight) return;
+    const d = Math.abs((r.top + r.bottom) / 2 - mid);
+    if (d < bestDist) { bestDist = d; best = s; }
+  });
+  light(best);
+}
+
+if (wall && stills.length) {
+  wall.classList.add('is-lighting');
+  lightNearestCentre();
   window.addEventListener('scroll', () => {
-    const pct = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight) * 100;
-    scrollProgress.style.width = Math.min(pct, 100) + '%';
+    if (!ticking) { ticking = true; requestAnimationFrame(lightNearestCentre); }
   }, { passive: true });
-}
-
-/* === Tap ripple (mobile) === */
-if (isTouchDevice) {
-  document.addEventListener('touchstart', e => {
-    const touch = e.touches[0];
-    const ripple = document.createElement('div');
-    ripple.className = 'tap-ripple';
-    ripple.style.left = touch.clientX + 'px';
-    ripple.style.top = touch.clientY + 'px';
-    ripple.style.width = '52px';
-    ripple.style.height = '52px';
-    document.body.appendChild(ripple);
-    setTimeout(() => ripple.remove(), 600);
-  }, { passive: true });
-}
-
-/* === Preloader === */
-const preloader = document.getElementById('preloader');
-if (preloader) {
-  window.addEventListener('load', () => {
-    setTimeout(() => preloader.classList.add('fade-out'), 100);
+  window.addEventListener('resize', lightNearestCentre, { passive: true });
+  stills.forEach(s => {
+    s.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') { hovered = s; light(s); } });
+    s.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') { hovered = null; lightNearestCentre(); } });
+    s.querySelector('.still-open').addEventListener('focus', () => { hovered = s; light(s); });
+    s.querySelector('.still-open').addEventListener('blur', () => { hovered = null; lightNearestCentre(); });
   });
 }
 
-/* ============================================================
-   GSAP + LENIS SETUP
-   ============================================================ */
-if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+/* ---------- viewer ---------- */
+const viewer = document.getElementById('viewer');
+const viewerImg = viewer && viewer.querySelector('.viewer-img');
+const viewerCaption = viewer && viewer.querySelector('.viewer-caption');
+let viewing = 0;
+let opener = null;
 
-gsap.registerPlugin(ScrollTrigger);
-let lenis;
-
-if (!isTouchDevice && typeof Lenis !== 'undefined') {
-  lenis = new Lenis();
-
-  lenis.on('scroll', ScrollTrigger.update);
-
-  gsap.ticker.add((time) => {
-    lenis.raf(time * 1000);
-  });
-  gsap.ticker.lagSmoothing(0);
-} else {
-  ScrollTrigger.normalizeScroll(true);
+function showStill(i) {
+  viewing = (i + stills.length) % stills.length;
+  const img = stills[viewing].querySelector('img');
+  viewerImg.src = img.getAttribute('src');
+  viewerImg.alt = img.alt;
+  viewerCaption.textContent = stills[viewing].querySelector('figcaption').textContent;
 }
 
-/* Utility: split element text into word spans for animation */
-function splitWords(el) {
-  const text = el.innerText.trim();
-  const words = text.split(/\s+/);
-  el.innerHTML = words.map(word =>
-    `<span style="display:inline-block;overflow:hidden"><span class="word-inner" style="display:inline-block">${word}</span></span>`
-  ).join(' ');
-  return el.querySelectorAll('.word-inner');
-}
-
-/* ============================================================
-   HERO ENTRANCE ANIMATION
-   ============================================================ */
-const heroTl = gsap.timeline({ delay: 0.3 });
-
-heroTl
-  .fromTo('.hero-label',
-    { opacity: 0, y: 30 },
-    { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' })
-  .fromTo('.hero-logo',
-    { opacity: 0, y: 30 },
-    { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, '-=0.45')
-  .fromTo('.hero-title',
-    { opacity: 0, y: 30 },
-    { opacity: 1, y: 0, duration: 0.9, ease: 'power3.out' }, '-=0.65')
-  .fromTo('.hero-divider',
-    { opacity: 0, scaleX: 0 },
-    { opacity: 1, scaleX: 1, duration: 0.5, ease: 'power3.out' }, '-=0.6')
-  .fromTo('.hero-name',
-    { opacity: 0, y: 20 },
-    { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' }, '-=0.35')
-  .fromTo('.hero-tagline',
-    { opacity: 0, y: 20 },
-    { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' }, '-=0.35')
-  .fromTo('.hero-actions',
-    { opacity: 0, y: 20 },
-    { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' }, '-=0.35')
-  .fromTo('.hero-scroll',
-    { opacity: 0 },
-    { opacity: 1, duration: 0.8, ease: 'power3.out' }, '-=0.2');
-
-/* ============================================================
-   SCROLL-TRIGGERED ANIMATIONS
-   ============================================================ */
-
-/* Section titles — word-by-word reveal */
-document.querySelectorAll('.section-title').forEach(title => {
-  const words = splitWords(title);
-  gsap.from(words, {
-    y: 30,
-    opacity: 0,
-    duration: 0.8,
-    stagger: 0.08,
-    ease: 'power3.out',
-    scrollTrigger: {
-      trigger: title,
-      start: 'top 85%',
-      once: true,
-    },
-  });
-});
-
-/* Section labels — fade in */
-document.querySelectorAll('.section-label').forEach(label => {
-  gsap.from(label, {
-    y: 20,
-    opacity: 0,
-    duration: 0.6,
-    ease: 'power3.out',
-    scrollTrigger: {
-      trigger: label,
-      start: 'top 85%',
-      once: true,
-    },
-  });
-});
-
-/* Portfolio cards — staggered fade up */
-gsap.from('.portfolio-card', {
-  y: 40,
-  opacity: 0,
-  duration: 0.7,
-  stagger: 0.1,
-  ease: 'power3.out',
-  scrollTrigger: {
-    trigger: '.portfolio-grid',
-    start: 'top 85%',
-    once: true,
-  },
-});
-
-/* Portfolio filters — fade in */
-gsap.from('.portfolio-filters', {
-  y: 20,
-  opacity: 0,
-  duration: 0.6,
-  ease: 'power3.out',
-  scrollTrigger: {
-    trigger: '.portfolio-filters',
-    start: 'top 85%',
-    once: true,
-  },
-});
-
-/* About section — sequential reveal */
-const aboutElements = document.querySelectorAll('.about-content > *');
-gsap.from(aboutElements, {
-  y: 30,
-  opacity: 0,
-  duration: 0.6,
-  stagger: 0.15,
-  ease: 'power3.out',
-  scrollTrigger: {
-    trigger: '.about-content',
-    start: 'top 85%',
-    once: true,
-  },
-});
-
-/* About image — fade in */
-gsap.from('.about-image', {
-  y: 30,
-  opacity: 0,
-  duration: 0.7,
-  ease: 'power3.out',
-  scrollTrigger: {
-    trigger: '.about-image',
-    start: 'top 85%',
-    once: true,
-  },
-});
-
-/* Contact info — fade up */
-gsap.from('.contact-info > *', {
-  y: 30,
-  opacity: 0,
-  duration: 0.6,
-  stagger: 0.1,
-  ease: 'power3.out',
-  scrollTrigger: {
-    trigger: '.contact-info',
-    start: 'top 85%',
-    once: true,
-  },
-});
-
-/* Contact form — fade up */
-gsap.from('.contact-form-wrapper', {
-  y: 30,
-  opacity: 0,
-  duration: 0.6,
-  ease: 'power3.out',
-  scrollTrigger: {
-    trigger: '.contact-form-wrapper',
-    start: 'top 85%',
-    once: true,
-  },
-});
-
-/* ============================================================
-   HERO PARALLAX
-   ============================================================ */
-/* Video pans from top to bottom as you scroll through the hero */
-const heroVideo = document.querySelector('.hero-video');
-if (heroVideo) {
-  const videoPos = { val: 10 };
-  gsap.to(videoPos, {
-    val: 90,
-    ease: 'none',
-    scrollTrigger: {
-      trigger: '#hero',
-      start: 'top top',
-      end: 'bottom top',
-      scrub: true,
-    },
-    onUpdate() {
-      heroVideo.style.objectPosition = `center ${videoPos.val}%`;
-    },
-  });
-}
-
-gsap.to('.hero-content', {
-  yPercent: 55,
-  ease: 'none',
-  scrollTrigger: {
-    trigger: '#hero',
-    start: 'top top',
-    end: 'bottom top',
-    scrub: true,
-  },
-});
-
-/* ============================================================
-   MAGNETIC BUTTONS
-   ============================================================ */
-document.querySelectorAll('.btn').forEach(btn => {
-  btn.addEventListener('mousemove', e => {
-    const rect = btn.getBoundingClientRect();
-    const cx = rect.left + rect.width / 2;
-    const cy = rect.top + rect.height / 2;
-    const dx = (e.clientX - cx) * 0.35;
-    const dy = (e.clientY - cy) * 0.35;
-    gsap.to(btn, { x: dx, y: dy, duration: 0.3, ease: 'power2.out' });
-  });
-  btn.addEventListener('mouseleave', () => {
-    gsap.to(btn, { x: 0, y: 0, duration: 0.5, ease: 'elastic.out(1, 0.4)' });
-  });
-});
-
-} else {
-  /* GSAP not available — make hero content visible */
-  document.querySelectorAll('.hero-content > *, .hero-scroll').forEach(el => {
-    el.style.opacity = '1';
-  });
-}
-
-/* ============================================================
-   NAVBAR — transparent → frosted glass on scroll
-   ============================================================ */
-const navbar = document.getElementById('navbar');
-
-function handleNavScroll() {
-  navbar.classList.toggle('scrolled', window.scrollY > 40);
-}
-window.addEventListener('scroll', handleNavScroll, { passive: true });
-handleNavScroll(); // run once on load
-
-/* ============================================================
-   MOBILE NAV TOGGLE
-   ============================================================ */
-const navToggle = document.getElementById('navToggle');
-const navLinks  = document.getElementById('navLinks');
-
-navToggle.addEventListener('click', () => {
-  const isOpen = navLinks.classList.toggle('open');
-  navToggle.classList.toggle('open', isOpen);
-  navToggle.setAttribute('aria-expanded', String(isOpen));
-  document.body.style.overflow = isOpen ? 'hidden' : '';
-});
-
-// Close on any nav link click
-navLinks.querySelectorAll('a').forEach(link => {
-  link.addEventListener('click', () => {
-    navLinks.classList.remove('open');
-    navToggle.classList.remove('open');
-    navToggle.setAttribute('aria-expanded', 'false');
-    document.body.style.overflow = '';
-  });
-});
-
-// Close on Escape
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape' && navLinks.classList.contains('open')) {
-    navLinks.classList.remove('open');
-    navToggle.classList.remove('open');
-    navToggle.setAttribute('aria-expanded', 'false');
-    document.body.style.overflow = '';
-  }
-});
-
-/* ============================================================
-   PORTFOLIO — category filter
-   ============================================================ */
-const filterBtns    = document.querySelectorAll('.filter-btn');
-const portfolioCards = document.querySelectorAll('.portfolio-card');
-
-filterBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
-    // Update active state
-    filterBtns.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-
-    const filter = btn.dataset.filter;
-
-    portfolioCards.forEach(card => {
-      const match = filter === 'all' || card.dataset.category === filter;
-      card.classList.toggle('hidden', !match);
+if (viewer && typeof viewer.showModal === 'function') {
+  stills.forEach((s, i) => {
+    s.querySelector('.still-open').addEventListener('click', e => {
+      opener = e.currentTarget;
+      showStill(i);
+      viewer.showModal();
     });
   });
-});
+  viewer.querySelectorAll('[data-step]').forEach(b => b.addEventListener('click', () => showStill(viewing + Number(b.dataset.step))));
+  viewer.querySelector('.viewer-close').addEventListener('click', () => viewer.close());
+  viewer.addEventListener('click', e => { if (e.target === viewer) viewer.close(); });
+  viewer.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight') showStill(viewing + 1);
+    if (e.key === 'ArrowLeft') showStill(viewing - 1);
+  });
+  viewer.addEventListener('close', () => { if (opener) opener.focus(); });
+  let startX = null;
+  viewer.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
+  viewer.addEventListener('touchend', e => {
+    if (startX === null) return;
+    const dx = e.changedTouches[0].clientX - startX;
+    if (Math.abs(dx) > 50) showStill(viewing + (dx < 0 ? 1 : -1));
+    startX = null;
+  });
+}
 
 /* ============================================================
-   PORTFOLIO — YouTube thumbnail + lazy video embed
-   ============================================================ */
-portfolioCards.forEach(card => {
-  const videoId  = (card.dataset.videoId || '').trim();
-  const thumbImg = card.querySelector('.thumb-img');
-  const playBtn  = card.querySelector('.play-btn');
-  const thumbnail = card.querySelector('.card-thumbnail');
-
-  // Load YouTube thumbnail only when videoId is real
-  if (videoId && videoId !== 'YOUTUBE_VIDEO_ID') {
-    // Try maxresdefault, fall back to hqdefault if it 404s
-    const hq = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
-    const max = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
-
-    thumbImg.src = max;
-    thumbImg.onerror = () => { thumbImg.src = hq; };
-    thumbImg.alt = card.querySelector('.card-title')?.textContent || 'Video';
-  }
-
-  // On play click — replace thumbnail with autoplay iframe
-  if (playBtn) {
-    playBtn.addEventListener('click', e => {
-      e.stopPropagation();
-
-      if (!videoId || videoId === 'YOUTUBE_VIDEO_ID') {
-        // Guide the user if they haven't set a video ID yet
-        console.warn('[Nohea Media] Replace YOUTUBE_VIDEO_ID in index.html with your actual YouTube video ID.');
-        return;
-      }
-
-      const iframe = document.createElement('iframe');
-      iframe.className = 'card-iframe';
-      iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&color=white`;
-      iframe.title = card.querySelector('.card-title')?.textContent || 'Video';
-      iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
-      iframe.allowFullscreen = true;
-
-      // Swap thumbnail for iframe
-      thumbnail.innerHTML = '';
-      thumbnail.appendChild(iframe);
-    });
-  }
-});
-
-/* ============================================================
-   CONTACT FORM
-   Uses Web3Forms (https://web3forms.com — free, emails directly)
+   CONTACT FORM (Web3Forms)
    ============================================================ */
 const contactForm = document.getElementById('contactForm');
 const formSuccess = document.getElementById('formSuccess');
@@ -399,10 +289,8 @@ const formSuccess = document.getElementById('formSuccess');
 if (contactForm && formSuccess) {
   contactForm.addEventListener('submit', async e => {
     e.preventDefault();
-
     const submitBtn = contactForm.querySelector('.form-submit');
     const originalText = submitBtn.textContent;
-
     submitBtn.textContent = 'Sending…';
     submitBtn.disabled = true;
 
@@ -410,14 +298,12 @@ if (contactForm && formSuccess) {
       const response = await fetch(contactForm.action, {
         method: 'POST',
         body: new FormData(contactForm),
-        headers: { 'Accept': 'application/json' },
+        headers: { Accept: 'application/json' },
       });
-
       const data = await response.json();
-
       if (data.success) {
-        contactForm.style.display = 'none';
-        formSuccess.style.display = 'block';
+        contactForm.hidden = true;
+        formSuccess.hidden = false;
       } else {
         throw new Error(data.message || 'Form submission failed');
       }
@@ -425,63 +311,7 @@ if (contactForm && formSuccess) {
       console.error('[Nohea Media] Form error:', err);
       submitBtn.textContent = originalText;
       submitBtn.disabled = false;
-      alert('Message could not be sent. Please email directly at bradendimauro@gmail.com');
+      alert('Message could not be sent. Please email bradendimauro@gmail.com directly.');
     }
-  });
-}
-
-/* ============================================================
-   SMOOTH ACTIVE SECTION HIGHLIGHT (optional nav highlight)
-   ============================================================ */
-const sections = document.querySelectorAll('section[id]');
-const navAnchors = document.querySelectorAll('.nav-links a[href^="#"]');
-
-const sectionObserver = new IntersectionObserver(
-  entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const id = entry.target.id;
-        navAnchors.forEach(a => {
-          a.classList.toggle('active-link', a.getAttribute('href') === `#${id}`);
-        });
-      }
-    });
-  },
-  { threshold: 0, rootMargin: '-30% 0px -30% 0px' }
-);
-
-sections.forEach(s => sectionObserver.observe(s));
-
-/* ============================================================
-   CUSTOM CURSOR
-   ============================================================ */
-const cursorRing = document.getElementById('cursor-ring');
-const hoverTargets = 'a, button, [role="button"], .portfolio-card, .filter-btn';
-
-if (cursorRing && typeof gsap !== 'undefined' && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
-  let mouseX = 0, mouseY = 0;
-
-  document.addEventListener('mousemove', e => {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
-    gsap.to(cursorRing, {
-      x: mouseX,
-      y: mouseY,
-      duration: 0.12,
-      ease: 'power2.out',
-      opacity: 1,
-    });
-  });
-
-  document.querySelectorAll(hoverTargets).forEach(el => {
-    el.addEventListener('mouseenter', () => cursorRing.classList.add('is-hovering'));
-    el.addEventListener('mouseleave', () => cursorRing.classList.remove('is-hovering'));
-  });
-
-  document.addEventListener('mouseleave', () => {
-    gsap.to(cursorRing, { opacity: 0, duration: 0.2 });
-  });
-  document.addEventListener('mouseenter', () => {
-    gsap.to(cursorRing, { opacity: 1, duration: 0.2 });
   });
 }

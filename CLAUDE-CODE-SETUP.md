@@ -24,15 +24,15 @@
 ## Step 4: Git is Already Connected
 Your repo is already linked to:
 ```
-https://github.com/bdog1234567/webstite3.git
+https://github.com/bdog1234567/Nohea-Media
 ```
 - **Branch**: `master` (deployed via GitHub Pages)
-- **Site URL**: https://bdog1234567.github.io/webstite3/
+- **Site URL**: https://noheamedia.com
 
 ## Step 5: Give Claude Context
 When starting a new chat, paste this to get Claude up to speed:
 
-> This is the Nohea Media portfolio site for Braden Di Mauro. It's a static HTML/CSS/JS site (no frameworks) deployed on GitHub Pages from the master branch. The repo is bdog1234567/webstite3. Always commit and push changes to master after editing so the live site updates. The site has 7 portfolio cards with YouTube video embeds, category filters (All/VFX/AI Generative/Editing & Motion), and sections for Portfolio, About, and Contact.
+> This is the Nohea Media portfolio site for Braden Di Mauro. It's a static HTML/CSS/JS site (no frameworks) deployed on GitHub Pages from the master branch. The repo is bdog1234567/Nohea-Media. Always commit and push changes to master after editing so the live site updates. The site ("the dark room" design, Nov 2026) has a hero reel, 7 YouTube films grouped by category, 12 generative stills, About, and Contact (Web3Forms).
 
 ## Project Structure
 ```
@@ -45,40 +45,43 @@ og-image.png  — Open Graph image for link previews (white logo on black)
 CNAME         — Custom domain config (noheamedia.com)
 ```
 
-## Portfolio Cards (current)
-| # | Title | Video ID | Category | Format |
-|---|-------|----------|----------|--------|
-| 1 | H&M Spec Ad | crHRXVX3aHU | AI Generative | Portrait |
-| 2 | Saint Laurent Spec Ad | mf-8dzWB6WU | AI Generative | Portrait |
-| 3 | South Bay Real Estate Spec Ad | 7QEYkuHp5iA | AI Generative | Landscape |
-| 4 | Fire VFX | ACfLZuihFbk | VFX | Landscape |
-| 5 | 3D Tracking | tlSXv_czMxo | VFX | Landscape |
-| 6 | Director Reel | -38tTSXcPxs | Editing / Motion | Landscape |
-| 7 | Logo Animation | QGd1htOqKSw | Editing / Motion | Landscape |
+## Design (Nov 2026 redesign: "the dark room")
+One near-black field; the work is the lit thing in it. One typeface (Newsreader, Google Fonts),
+one accent (crimson #b11226) used only on actions. No external JS libraries.
 
-## How to Add a New Video
-To add a new portfolio card, copy this template and add it before `</div><!-- /portfolio-grid -->` in index.html:
+- Hero: name + the 9:16 reel (`newhero.mp4` desktop at original quality, `newhero-mobile.mp4` on
+  phones; keep the `data-src-desktop` / `data-src-mobile` attributes). `hero-poster.jpg` is its first frame.
+- Films: a list grouped by category; on desktop the chosen film shows on a sticky stage, on phones
+  each film plays in its own frame.
+- Stills: 12 generative stills in `stills/`, in three uneven tracks. Only the frame under the
+  pointer (or nearest the middle of the screen) is lit. Click opens the viewer.
+
+## Films (current)
+| # | Title | Video ID | Group | Shape |
+|---|-------|----------|-------|-------|
+| 1 | H&M spec ad | crHRXVX3aHU | AI generative | tall |
+| 2 | Saint Laurent spec ad | mf-8dzWB6WU | AI generative | tall |
+| 3 | South Bay real estate spec ad | 7QEYkuHp5iA | AI generative | wide |
+| 4 | Fire VFX | ACfLZuihFbk | VFX | wide |
+| 5 | 3D tracking | tlSXv_czMxo | VFX | wide |
+| 6 | Director reel | -38tTSXcPxs | Editing and motion | wide |
+| 7 | Logo animation | QGd1htOqKSw | Editing and motion | wide |
+
+## How to Add a New Film
+Copy this into the right group's `<ul class="film-list">` in index.html:
 
 ```html
-<article class="portfolio-card reveal" data-category="CATEGORY" data-video-id="YOUTUBE_ID">
-  <div class="card-media">
-    <div class="card-thumbnail">
-      <img src="" alt="TITLE" class="thumb-img" loading="lazy" />
-      <div class="card-overlay">
-        <button class="play-btn" aria-label="Play TITLE">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
-        </button>
-      </div>
-    </div>
+<li class="film reveal" data-video-id="YOUTUBE_ID" data-shape="wide" data-title="Title" data-meta="Spec ad">
+  <button class="film-pick" type="button">
+    <span class="film-title">Title</span>
+    <span class="film-meta">Spec ad</span>
+  </button>
+  <div class="film-media">
+    <img src="https://i.ytimg.com/vi/YOUTUBE_ID/maxresdefault.jpg" alt="Still from Title" loading="lazy" width="1280" height="720" />
   </div>
-  <div class="card-info">
-    <span class="card-tag">TAG_LABEL</span>
-    <h3 class="card-title">TITLE</h3>
-    <p class="card-desc">Short description</p>
-  </div>
-</article>
+</li>
 ```
 
-- For portrait (9:16) videos, add `portrait` to the class: `class="portfolio-card portrait reveal"`
-- Categories: `ai`, `vfx`, `editing`
-- Extract video ID from YouTube URL: `youtube.com/watch?v=VIDEO_ID` or `youtube.com/shorts/VIDEO_ID`
+- Vertical videos (Shorts): `data-shape="tall"` and use `https://i.ytimg.com/vi/YOUTUBE_ID/oar2.jpg` (1080x1920).
+- Extract the ID from `youtube.com/watch?v=ID` or `youtube.com/shorts/ID`.
+- Bump the `?v=` numbers on `style.css` / `script.js` in index.html after editing them.
