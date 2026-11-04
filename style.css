@@ -194,8 +194,15 @@ button { cursor: pointer; background: none; border: 0; padding: 0; }
   letter-spacing: -0.05em;
   margin-left: -0.04em;
 }
-.hero-lead {
+.hero-role {
   margin-top: clamp(28px, 3vw, 44px);
+  font-size: clamp(1.625rem, 1rem + 2.6vw, 3.25rem);
+  font-weight: 300;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+.hero-lead {
+  margin-top: clamp(14px, 1.4vw, 20px);
   font-size: var(--step-lead);
   line-height: 1.4;
   max-width: 30ch;
@@ -552,13 +559,14 @@ button { cursor: pointer; background: none; border: 0; padding: 0; }
   transition: opacity 800ms var(--ease-soft), translate 1000ms var(--ease-expo), filter 900ms var(--ease-soft);
   transition-delay: calc(60ms + var(--c, 0) * 26ms);
 }
-.js .hero-lead, .js .hero-actions {
+.js .hero-role, .js .hero-lead, .js .hero-actions {
   opacity: 0;
   translate: 0 22px;
   filter: blur(8px);
   transition: opacity 800ms var(--ease-soft), translate 1000ms var(--ease-expo), filter 800ms var(--ease-soft);
 }
-.js .hero-lead { transition-delay: 380ms; }
+.js .hero-role { transition-delay: 300ms; }
+.js .hero-lead { transition-delay: 400ms; }
 .js .hero-actions { transition-delay: 460ms; }
 .js .hero-reel video {
   opacity: 0;
@@ -571,7 +579,7 @@ button { cursor: pointer; background: none; border: 0; padding: 0; }
   transition: opacity 900ms ease 300ms;
 }
 .js .is-loaded .hero-name .ch { opacity: 1; translate: none; filter: none; }
-.js .is-loaded .hero-lead, .js .is-loaded .hero-actions { opacity: 1; translate: none; filter: none; }
+.js .is-loaded .hero-role, .js .is-loaded .hero-lead, .js .is-loaded .hero-actions { opacity: 1; translate: none; filter: none; }
 .js .is-loaded .hero-reel video { opacity: 1; scale: 1; filter: none; }
 .js .is-loaded .wordmark, .js .is-loaded .site-nav, .js .is-loaded .menu-btn { opacity: 1; }
 
@@ -609,7 +617,7 @@ button { cursor: pointer; background: none; border: 0; padding: 0; }
 @media (prefers-reduced-motion: reduce) {
   /* people who turn animation off still get fades and focus pulls; nothing travels */
   html { scroll-behavior: auto; }
-  .js .hero-name .ch, .js .reveal-head .wd, .js .reveal, .js .hero-lead, .js .hero-actions { translate: none; }
+  .js .hero-name .ch, .js .reveal-head .wd, .js .reveal, .js .hero-role, .js .hero-lead, .js .hero-actions { translate: none; }
   .js .hero-reel video { scale: none; }
   .stage-poster { animation: none; }
   .stage-poster-next { translate: none; }
@@ -697,7 +705,8 @@ button { cursor: pointer; background: none; border: 0; padding: 0; }
   }
   .hero-copy { position: relative; z-index: 1; padding-bottom: 0; }
   .hero-name { font-size: clamp(4rem, 21vw, 7.5rem); }
-  .hero-lead { margin-top: 24px; font-size: 1.1875rem; }
+  .hero-role { margin-top: 22px; font-size: 1.75rem; }
+  .hero-lead { margin-top: 10px; font-size: 1.1875rem; }
   .hero-actions { margin-top: 24px; gap: 24px; }
 
   .section { padding-top: clamp(96px, 22vw, 140px); }
