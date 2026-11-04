@@ -60,7 +60,8 @@
     /* if script.js never runs, show everything instead of leaving it hidden */
     setTimeout(function () { if (!window.__noheaReady) document.documentElement.classList.remove('js'); }, 2500);
   </script>
-  <link rel="stylesheet" href="style.css?v=23" />
+  <link rel="stylesheet" href="vendor/lenis.css?v=1.3.26" />
+  <link rel="stylesheet" href="style.css?v=34" />
 </head>
 <body>
 
@@ -84,10 +85,10 @@
 
     <!-- ============ HERO ============ -->
     <section id="top" class="hero" aria-labelledby="hero-title">
-      <div class="hero-copy">
+      <div class="hero-copy" data-parallax-hero="copy">
         <h1 class="hero-name" id="hero-title">
-          <span class="mask"><span class="line" style="--i:0">Braden</span></span>
-          <span class="mask"><span class="line" style="--i:1">Di Mauro</span></span>
+          <span class="line" data-split="chars">Braden</span>
+          <span class="line" data-split="chars">Di Mauro</span>
         </h1>
         <p class="hero-lead">AI filmmaker and VFX artist behind Nohea Media, currently a Creative Director at Meta. I make films that don't look like AI.</p>
         <div class="hero-actions">
@@ -96,7 +97,7 @@
         </div>
       </div>
 
-      <figure class="hero-reel">
+      <figure class="hero-reel" data-parallax-hero="reel">
         <video class="hero-video" autoplay muted loop playsinline preload="auto" poster="hero-poster.jpg"
                aria-label="Showreel: fashion and street scenes from Braden's recent work"
                data-src-desktop="newhero.mp4" data-src-mobile="newhero-mobile.mp4"></video>
@@ -223,7 +224,7 @@
       </div>
 
       <div class="wall">
-        <div class="track track-a">
+        <div class="track track-a" data-parallax="0">
           <figure class="still">
             <button class="still-open" type="button" aria-label="View larger: lace veil by candlelight">
               <img src="stills/lace-veil-candles.jpg" width="1067" height="1600" loading="lazy" alt="A woman under a black jeweled lace veil, candles burning behind her in a dark church" />
@@ -244,7 +245,7 @@
           </figure>
         </div>
 
-        <div class="track track-b">
+        <div class="track track-b" data-parallax="0.06">
           <figure class="still">
             <button class="still-open" type="button" aria-label="View larger: veil in wind">
               <img src="stills/veil-in-wind.jpg" width="1024" height="1024" loading="lazy" alt="Long black hair and sheer black fabric whipping in wind against a pale sky" />
@@ -271,7 +272,7 @@
           </figure>
         </div>
 
-        <div class="track track-c">
+        <div class="track track-c" data-parallax="0.12">
           <figure class="still">
             <button class="still-open" type="button" aria-label="View larger: jeweled cross">
               <img src="stills/jeweled-cross.jpg" width="1067" height="1600" loading="lazy" alt="Portrait with a rhinestone cross set on the forehead under a dark veil" />
@@ -404,6 +405,7 @@
     <a href="#top" class="text-link">Back to top</a>
   </footer>
 
-  <script src="script.js?v=12"></script>
+  <script src="vendor/lenis.min.js?v=1.3.26"></script>
+  <script src="script.js?v=22"></script>
 </body>
 </html>

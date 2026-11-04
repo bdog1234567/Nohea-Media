@@ -1,7 +1,8 @@
 /* ============================================================
    NOHEA MEDIA — script.js
-   No libraries. Everything here is optional: without it the page
-   shows every film, still and line in its finished state.
+   One small library (Lenis, vendored) for weighted scrolling on desktop.
+   Everything here is optional: without it the page shows every film,
+   still and line in its finished state.
    ============================================================ */
 
 'use strict';
@@ -16,7 +17,51 @@ const desktop = window.matchMedia('(min-width: 900px)');
 const yearEl = document.getElementById('year');
 if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-/* ---------- load sequence: over by ~1.2s ---------- */
+/* ---------- split text so it can arrive like a focus pull ---------- */
+function splitChars(el, start) {
+  const text = el.textContent;
+  el.textContent = '';
+  [...text].forEach((ch, i) => {
+    const s = document.createElement('span');
+    s.className = 'ch';
+    s.textContent = ch;
+    s.style.setProperty('--c', start + i);
+    el.appendChild(s);
+  });
+  return start + text.length;
+}
+function splitWords(el) {
+  const words = el.textContent.trim().split(/\s+/);
+  el.textContent = '';
+  words.forEach((w, i) => {
+    const s = document.createElement('span');
+    s.className = 'wd';
+    s.textContent = w;
+    s.style.setProperty('--w', i);
+    el.appendChild(s);
+    if (i < words.length - 1) el.appendChild(document.createTextNode(' '));
+  });
+}
+if (!reduceMotion) {
+  const heroName = document.querySelector('.hero-name');
+  if (heroName) {
+    heroName.setAttribute('aria-label', heroName.textContent.replace(/\s+/g, ' ').trim());
+    let n = 0;
+    heroName.querySelectorAll('[data-split="chars"]').forEach(line => {
+      line.setAttribute('aria-hidden', 'true');
+      n = splitChars(line, n);
+    });
+  }
+  document.querySelectorAll('.reveal-head').forEach(h => {
+    const line = h.querySelector('.line');
+    if (!line) return;
+    h.setAttribute('aria-label', line.textContent.trim());
+    line.setAttribute('aria-hidden', 'true');
+    splitWords(line);
+  });
+}
+
+/* ---------- load sequence ---------- */
 requestAnimationFrame(() => {
   requestAnimationFrame(() => document.body.classList.add('is-loaded'));
 });
@@ -30,6 +75,7 @@ function setMenu(open) {
   menuBtn.setAttribute('aria-expanded', String(open));
   menuBtn.textContent = open ? 'Close' : 'Menu';
   document.body.style.overflow = open ? 'hidden' : '';
+  if (window.lenis) open ? window.lenis.stop() : window.lenis.start();
 }
 if (menuBtn && siteNav) {
   menuBtn.addEventListener('click', () => setMenu(!siteNav.classList.contains('is-open')));
@@ -142,7 +188,7 @@ function select(film) {
     crossfadeTimer = setTimeout(() => {
       posterA.src = src;
       posterB.classList.remove('is-in');
-    }, 1650);
+    }, 1700);
   };
   if (posterB.complete) show(); else posterB.addEventListener('load', show, { once: true });
 }
@@ -202,6 +248,11 @@ if (stage) {
    is lit. Everything else waits in the dark.
    ============================================================ */
 const wall = document.querySelector('.wall');
+// fix each frame to its picture's shape so the picture can slide inside it
+document.querySelectorAll('.still img').forEach(img => {
+  const w = +img.getAttribute('width'), h = +img.getAttribute('height');
+  if (w && h) img.parentElement.style.setProperty('--ar', `${w} / ${h}`);
+});
 const stills = [...document.querySelectorAll('.still')];
 let hovered = null;
 let ticking = false;
@@ -260,6 +311,7 @@ if (viewer && typeof viewer.showModal === 'function') {
       opener = e.currentTarget;
       showStill(i);
       viewer.showModal();
+      if (window.lenis) window.lenis.stop();
     });
   });
   viewer.querySelectorAll('[data-step]').forEach(b => b.addEventListener('click', () => showStill(viewing + Number(b.dataset.step))));
@@ -269,7 +321,10 @@ if (viewer && typeof viewer.showModal === 'function') {
     if (e.key === 'ArrowRight') showStill(viewing + 1);
     if (e.key === 'ArrowLeft') showStill(viewing - 1);
   });
-  viewer.addEventListener('close', () => { if (opener) opener.focus(); });
+  viewer.addEventListener('close', () => {
+    if (window.lenis) window.lenis.start();
+    if (opener) opener.focus({ preventScroll: true });
+  });
   let startX = null;
   viewer.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
   viewer.addEventListener('touchend', e => {
@@ -314,4 +369,100 @@ if (contactForm && formSuccess) {
       alert('Message could not be sent. Please email bradendimauro@gmail.com directly.');
     }
   });
+}
+
+/* ============================================================
+   WEIGHT AND DEPTH
+   Weighted scrolling on desktop (phones keep their own momentum),
+   parallax driven from one animation frame, magnetic buttons.
+   ============================================================ */
+if (!reduceMotion) {
+  if (finePointer && typeof Lenis !== 'undefined') {
+    window.lenis = new Lenis({ lerp: 0.085, wheelMultiplier: 0.95, anchors: true, autoRaf: false });
+  }
+
+  const vh = () => window.innerHeight;
+  const hero = document.querySelector('.hero');
+  const heroCopy = document.querySelector('[data-parallax-hero="copy"]');
+  const heroReel = document.querySelector('[data-parallax-hero="reel"]');
+
+  // things that drift at their own speed: [element, reference element, speed]
+  let layers = [];
+  // pictures that slide inside their frames: [img, frame]
+  let insets = [];
+
+  function absTop(el) {
+    let y = 0;
+    for (let n = el; n; n = n.offsetParent) y += n.offsetTop;
+    return y;
+  }
+  function measure() {
+    const wide = desktop.matches;
+    layers = [...document.querySelectorAll('[data-parallax]')]
+      .filter(() => wide)
+      .map(el => ({ el, ref: el.parentElement, speed: parseFloat(el.dataset.parallax) || 0 }))
+      .filter(l => l.speed !== 0)
+      .map(l => ({ ...l, top: absTop(l.ref), h: l.ref.offsetHeight }));
+    insets = [...document.querySelectorAll('.still img, .about-portrait img')]
+      .map(img => { const f = img.parentElement; return { img, top: absTop(f), h: f.offsetHeight }; });
+    document.querySelectorAll('[data-parallax]').forEach(el => { if (!wide) el.style.translate = ''; });
+  }
+
+  let lastY = -1;
+  function frame(time) {
+    if (window.lenis) window.lenis.raf(time);
+    const y = window.lenis ? window.lenis.animatedScroll : window.scrollY;
+    if (y !== lastY) {
+      lastY = y;
+      const h = vh();
+      // hero: the name lifts away faster than the reel, which lags behind
+      if (hero && y < h * 1.4) {
+        if (heroCopy) heroCopy.style.translate = `0 ${(-y * 0.18).toFixed(1)}px`;
+        if (heroReel && desktop.matches) heroReel.style.translate = `0 ${(y * 0.22).toFixed(1)}px`;
+        else if (heroReel) heroReel.style.translate = `0 ${(y * 0.35).toFixed(1)}px`;
+      }
+      // columns drifting at different speeds
+      for (const l of layers) {
+        const offset = (l.top + l.h / 2) - (y + h / 2);
+        if (Math.abs(offset) > l.h + h) continue;
+        l.el.style.translate = `0 ${(-offset * l.speed).toFixed(1)}px`;
+      }
+      // pictures sliding inside their frames
+      for (const p of insets) {
+        const offset = (p.top + p.h / 2) - (y + h / 2);
+        if (Math.abs(offset) > p.h + h) continue;
+        const t = Math.max(-1, Math.min(1, offset / (h * 0.9)));
+        p.img.style.translate = `0 ${(t * 4).toFixed(2)}%`;
+      }
+    }
+    requestAnimationFrame(frame);
+  }
+
+  measure();
+  window.addEventListener('resize', () => { measure(); lastY = -1; }, { passive: true });
+  window.addEventListener('load', () => { measure(); lastY = -1; });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { measure(); lastY = -1; });
+  requestAnimationFrame(frame);
+
+  // magnetic pull on the main actions
+  if (finePointer) {
+    document.querySelectorAll('.btn, .play').forEach(el => {
+      let tx = 0, ty = 0, x = 0, y = 0, raf = 0;
+      const tick = () => {
+        x += (tx - x) * 0.16;
+        y += (ty - y) * 0.16;
+        el.style.translate = `${x.toFixed(2)}px ${y.toFixed(2)}px`;
+        if (Math.abs(tx - x) > 0.05 || Math.abs(ty - y) > 0.05) raf = requestAnimationFrame(tick);
+        else raf = 0;
+      };
+      const kick = () => { if (!raf) raf = requestAnimationFrame(tick); };
+      el.addEventListener('pointermove', e => {
+        const r = el.getBoundingClientRect();
+        tx = (e.clientX - (r.left + r.width / 2)) * 0.28;
+        ty = (e.clientY - (r.top + r.height / 2)) * 0.32;
+        kick();
+      });
+      el.addEventListener('pointerleave', () => { tx = 0; ty = 0; kick(); });
+    });
+  }
 }
